@@ -338,7 +338,7 @@ Detailed methodology, limitations, and metric definitions are documented in the 
 This project was developed collaboratively by:
 
 1. **Pallavi Rajkumar Bubanale**
-2. **Snehita**
+2. **Snehitha**
 3. **Ramith**
 4. **Ramitha**
 
