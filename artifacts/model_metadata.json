@@ -1,0 +1,31 @@
+{
+  "model": "logreg",
+  "hyperparameters": {
+    "C": 56.69849511478853
+  },
+  "feature_columns": [
+    "distance_m",
+    "bearing_diff_deg",
+    "speed_mps",
+    "time_gap_s",
+    "segment_length_m",
+    "n_candidates",
+    "dist_rank",
+    "dist_gap_m"
+  ],
+  "candidate_radius_m": 150.0,
+  "candidate_cap": 30,
+  "crs": "EPSG:32640",
+  "training_trip_count": 80,
+  "tuning_trial": 1,
+  "training_cv_macro_f1": 0.8013504481783601,
+  "hmm": {
+    "selected_classifier": "auto",
+    "probability_floor": 1e-12,
+    "transition": {
+      "distance_scale_m": 100.0,
+      "max_network_distance_m": 5000.0,
+      "max_speed_mps": 70.0
+    }
+  }
+}

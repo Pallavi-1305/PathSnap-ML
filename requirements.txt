@@ -1,0 +1,15 @@
+# Versions unverified; pin after testing.
+numpy
+pandas
+scipy
+scikit-learn
+pyyaml
+matplotlib
+pyarrow
+pyproj
+folium
+optuna
+joblib
+fastapi
+uvicorn
+httpx

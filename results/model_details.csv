@@ -1,0 +1,6 @@
+model,family,default_hyperparameters,objective_or_loss,strengths_and_limitations
+logreg,"Linear, probabilistic","LogisticRegression(C=1, max_iter=200)",binary log loss with L2 penalty,"Fast, calibrated probability baseline; linear boundary can underfit interactions."
+naive_bayes,"Probabilistic, generative (Gaussian Naive Bayes)",GaussianNB(var_smoothing=1e-9),Gaussian class-conditional likelihood,Fast generative baseline; conditional feature-independence assumption is restrictive.
+decision_tree,Tree-based (single decision tree),"DecisionTree(max_depth=12, min_samples_leaf=50)",Gini impurity,Captures nonlinear rules; a single tree can be unstable and underfit at strict limits.
+random_forest,Bagged trees (ensemble),"RandomForest(n_estimators=50, max_depth=12, max_samples=0.2)","Gini impurity, bagged trees","Robust nonlinear model; larger inference and memory cost, probabilities can be uncalibrated."
+hist_gradient_boosting,Boosting (histogram),"HistGradientBoosting(learning_rate=0.1, max_iter=200)",Binomial log loss,Efficient nonlinear boosting; can overfit if iterations/depth are too large.

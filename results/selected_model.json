@@ -1,0 +1,5 @@
+{
+  "selected_model": "logreg",
+  "selection_metric": "mean training GroupKFold macro F1",
+  "cv_macro_f1": 0.8013452711347477
+}

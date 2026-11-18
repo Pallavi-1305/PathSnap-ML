@@ -1,0 +1,19 @@
+{
+  "selected_model": "logreg",
+  "objective": "mean training-only GroupKFold macro F1 (full observation miss accounting)",
+  "cv_folds": 5,
+  "n_trials_requested": 12,
+  "n_trials_completed": 12,
+  "best_trial_number": 1,
+  "best_cv_macro_f1": 0.8013504481783601,
+  "best_params": {
+    "C": 56.69849511478853
+  },
+  "fold_macro_f1": [
+    0.7387651569835688,
+    0.7896931370436007,
+    0.8232145067143539,
+    0.8367176140252184,
+    0.8183618261250583
+  ]
+}

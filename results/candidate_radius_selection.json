@@ -1,0 +1,10 @@
+{
+  "radius_m": 150.0,
+  "max_candidates": 30,
+  "selection_model": "random_forest",
+  "selection_metric": "training GroupKFold macro F1",
+  "f1_tolerance": 0.002,
+  "selected_cv_macro_f1": 0.6016741598112307,
+  "selected_cv_candidate_recall": 0.9356362307097132,
+  "selected_candidate_miss_rate": 0.06436376929028677
+}

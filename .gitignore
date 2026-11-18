@@ -1,0 +1,9 @@
+data/*
+!data/splits.csv
+data/processed/
+__pycache__/
+.venv/
+.env
+*.log
+
+results/student_test_predictions.csv
