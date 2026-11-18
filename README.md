@@ -272,10 +272,10 @@ PathSnap provides a FastAPI backend and a lightweight browser interface.
 
 ### 1. Start the API server
 
-Run on Laptop 1:
+By default, the API is bound to this laptop only:
 
 ```bash
-python -m uvicorn app.api:app --host 0.0.0.0 --port 8000
+python -m app.api
 ```
 
 ### 2. Start the frontend
@@ -294,11 +294,17 @@ Open the following URL in your browser:
 http://localhost:8080
 ```
 
-Enter the reachable IP address of Laptop 1, for example:
+On one laptop, open:
 
 ```text
-http://192.168.1.20:8000
+http://localhost:8000
 ```
+
+For two-laptop access, keep `api.host` bound to loopback unless HTTPS is configured.
+Set `api.host` to the laptop's reachable address, provide a certificate and private key
+through `api.ssl_certfile` and `api.ssl_keyfile`, then start the API with
+`python -m app.api`. The frontend must then use `https://` with the matching address
+(for example, `https://192.168.1.20:8000`) and trust the configured certificate.
 
 ### API Endpoints
 

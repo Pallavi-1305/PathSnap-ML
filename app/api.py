@@ -215,3 +215,38 @@ def _continuity(arcs: list[int], model: TransitionModel) -> float:
 
 
 app = create_app()
+
+
+def main() -> None:
+    import uvicorn
+
+    cfg = yaml.safe_load((ROOT / "config.yaml").read_text(encoding="utf-8"))
+    api_cfg = cfg.get("api", {})
+    host = str(api_cfg.get("host", "127.0.0.1"))
+    port = int(api_cfg.get("port", 8000))
+    certfile = str(api_cfg.get("ssl_certfile", "")).strip()
+    keyfile = str(api_cfg.get("ssl_keyfile", "")).strip()
+
+    loopback_hosts = {"127.0.0.1", "::1", "localhost"}
+    if host not in loopback_hosts and (not certfile or not keyfile):
+        raise RuntimeError(
+            "HTTPS certificates are required when api.host exposes the server beyond loopback."
+        )
+
+    tls = {}
+    if certfile or keyfile:
+        if not certfile or not keyfile:
+            raise RuntimeError("api.ssl_certfile and api.ssl_keyfile must both be configured.")
+        cert_path = (ROOT / certfile).resolve()
+        key_path = (ROOT / keyfile).resolve()
+        if not cert_path.is_file():
+            raise RuntimeError(f"TLS certificate not found: {cert_path}")
+        if not key_path.is_file():
+            raise RuntimeError(f"TLS private key not found: {key_path}")
+        tls = {"ssl_certfile": str(cert_path), "ssl_keyfile": str(key_path)}
+
+    uvicorn.run(app, host=host, port=port, **tls)
+
+
+if __name__ == "__main__":
+    main()

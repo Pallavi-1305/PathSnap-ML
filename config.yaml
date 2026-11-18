@@ -50,5 +50,7 @@ hmm:
     max_speed_mps: 70.0
 
 api:
-  host: 0.0.0.0
+  host: 127.0.0.1
   port: 8000
+  ssl_certfile: ""  # Relative paths are resolved from the project root.
+  ssl_keyfile: ""   # Set both paths and use a reachable host for laptop-to-laptop HTTPS.

@@ -151,7 +151,7 @@ The saved all-trip run in `results/api_dry_run.csv` passed 10/10 requests. Each 
 Run the API on Laptop 1:
 
 ```powershell
-python -m uvicorn app.api:app --host 0.0.0.0 --port 8000
+python -m app.api
 ```
 
 Run the UI on Laptop 2:
