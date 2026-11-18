@@ -1,83 +1,349 @@
-# PathSnap
+# PathSnap – Intelligent GPS-to-Road Map Matching
 
-PathSnap matches noisy vehicle GPS observations to directed road arcs. This repository contains candidate generation, five candidate classifiers, training-only radius/model selection, Optuna tuning, Viterbi decoding, route evaluation, EDA, Folium maps, and a frozen-model API with a small browser UI.
+PathSnap is a machine learning-based road map-matching system that identifies the most likely directed road arcs corresponding to noisy vehicle GPS observations.
 
-## Current evaluation snapshot
+The system combines candidate generation, supervised machine learning, hyperparameter optimization, and Hidden Markov Model (HMM) decoding to improve the accuracy and continuity of reconstructed vehicle routes.
 
-- Dataset available locally: 80 training trips and 10 student-test trips. No evaluator trip folder was present or accessed.
-- Candidate setting: **150 m radius, cap 30**, selected by five-fold training-trip GroupKFold macro F1 among the required 150/175/200 m experiments.
-- Primary model: **Logistic Regression**, selected by mean training GroupKFold macro F1 of **0.8013**.
-- Optuna: 12 five-fold training-only trials; best `C=56.6985`, macro F1 **0.80135**. Tuned and untuned student macro F1 were both **0.8765**.
-- HMM/Viterbi: evaluated after classifier predictions. Mean student route F1 was **0.5490** classifier-only and **0.5440** with HMM; the HMM improved precision and transition feasibility but reduced recall and sequence similarity.
-- Full results and metric definitions: [report/final_report.md](report/final_report.md).
+It also provides a REST API and a lightweight browser-based interface for interacting with the trained model and visualizing predicted routes.
 
-## Data and setup
+## Key Features
 
-The raw files are not stored in Git. Each trip directory should contain `.track`, `.nodes`, `.arcs`, and `.route` files. `config.yaml` points to the expected dataset root using a relative path; change `data.raw_root` if your local layout differs. The 80/10 partition is read from `data/splits.csv`.
+- **GPS Candidate Generation:** Generates nearby directed road arcs for each GPS observation using configurable search radii and candidate limits.
+- **Machine Learning Classification:** Implements and compares five classification algorithms to identify the most likely road candidates.
+- **Candidate Selection Optimization:** Uses training-only cross-validation to select suitable candidate-generation parameters.
+- **Hyperparameter Tuning:** Uses Optuna to optimize the selected machine learning model.
+- **HMM-Based Route Decoding:** Applies Viterbi decoding to improve sequential consistency between predicted road arcs.
+- **Route Evaluation:** Evaluates candidate-level and route-level performance using precision, recall, F1-score, and sequence metrics.
+- **Exploratory Data Analysis:** Generates statistical summaries, evaluation plots, and interactive Folium maps.
+- **REST API:** Provides prediction endpoints using a frozen trained model.
+- **Browser Interface:** Offers a lightweight interface for submitting trip requests and viewing predicted routes.
 
-Install dependencies:
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Programming Language | Python |
+| Machine Learning | Scikit-learn |
+| Sequence Modeling | HMM, Viterbi Algorithm |
+| Hyperparameter Optimization | Optuna |
+| Data Processing | Pandas, NumPy |
+| API Development | FastAPI, Uvicorn |
+| Visualization | Matplotlib, Folium |
+| Testing | Pytest |
+| Frontend | HTML, CSS, JavaScript |
+| Model Serialization | Joblib |
+
+## System Workflow
+
+The PathSnap pipeline follows these stages:
+
+1. **Data Loading:** Loads GPS observations, road network information, and reference routes.
+2. **Exploratory Data Analysis:** Examines GPS characteristics, road network properties, and candidate-generation performance.
+3. **Candidate Generation:** Identifies nearby directed road arcs for each GPS observation.
+4. **Feature Extraction:** Calculates distance-based and candidate-ranking features.
+5. **Model Training:** Trains and compares five machine learning classifiers.
+6. **Hyperparameter Optimization:** Uses Optuna to tune the selected classifier using training data.
+7. **HMM Decoding:** Applies the Viterbi algorithm to obtain sequentially consistent route predictions.
+8. **Evaluation:** Compares classifier-only and HMM-based route predictions.
+9. **API Integration:** Loads the frozen model and exposes prediction functionality through a REST API.
+
+## Evaluation Results
+
+The following results represent the current experimental evaluation.
+
+### Dataset
+
+- 80 training trips.
+- 10 student-test trips.
+- No evaluator trip folder was present or accessed.
+
+### Candidate Generation
+
+- Selected search radius: **150 metres**.
+- Maximum candidates per observation: **30**.
+- Selection based on five-fold GroupKFold macro F1 using training trips.
+
+### Model Selection
+
+- Selected classifier: **Logistic Regression**.
+- Mean training GroupKFold macro F1: **0.8013**.
+
+### Hyperparameter Optimization
+
+- Optimization framework: Optuna.
+- Number of trials: 12.
+- Best parameter: `C = 56.6985`.
+- Best macro F1: **0.80135**.
+- Tuned and untuned student-test macro F1: **0.8765** for both.
+
+### HMM Evaluation
+
+| Evaluation Metric | Classifier Only | With HMM |
+|---|---:|---:|
+| Mean Student Route F1 | 0.5490 | 0.5440 |
+
+The HMM improved precision and transition feasibility but reduced recall and sequence similarity. Therefore, HMM decoding did not produce an overall improvement in route F1 in the current evaluation.
+
+Detailed results and metric definitions are available in [`report/final_report.md`](report/final_report.md).
+
+## Project Structure
+
+```text
+PathSnap-ML/
+│
+├── app/
+│   ├── api.py
+│   └── ui/
+│       └── index.html
+│
+├── artifacts/
+│   ├── final_model.joblib
+│   └── model_metadata.json
+│
+├── data/
+│   └── splits.csv
+│
+├── pathsnap/
+│   ├── data.py
+│   ├── features.py
+│   ├── hmm.py
+│   ├── maps.py
+│   ├── models.py
+│   ├── pipeline.py
+│   ├── probabilities.py
+│   ├── tune.py
+│   └── viz.py
+│
+├── preprocessing/
+│
+├── report/
+│   └── final_report.md
+│
+├── results/
+│   ├── confusion_matrices/
+│   ├── eda/
+│   └── figures/
+│
+├── scripts/
+│
+├── tests/
+│
+├── config.yaml
+├── requirements.txt
+├── pytest.ini
+├── run_preprocessing.py
+└── README.md
+```
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Pallavi-1305/PathSnap-ML.git
+cd PathSnap-ML
+```
+
+### 2. Create a virtual environment (recommended)
+
+```bash
+python -m venv venv
+```
+
+Activate it on Windows:
 
 ```powershell
+venv\Scripts\activate
+```
+
+### 3. Install dependencies
+
+```bash
 python -m pip install -r requirements.txt
 ```
 
-## Reproduce the pipeline
+## Dataset Configuration
 
-Run these commands from the repository root, in order:
+Raw dataset files are not included in this repository.
 
-```powershell
+Each trip directory is expected to contain:
+
+- `.track`
+- `.nodes`
+- `.arcs`
+- `.route`
+
+The dataset root is configured through `config.yaml`.
+
+Update `data.raw_root` according to your local dataset directory.
+
+The training and student-test partition is defined in `data/splits.csv`.
+
+## Reproducing the Pipeline
+
+Execute the following commands from the project root directory in the specified order.
+
+**1. Exploratory Data Analysis**
+
+```bash
 python scripts/1_eda.py
+```
+
+**2. Baseline Candidate Radius Evaluation**
+
+```bash
 python scripts/1b_baseline_radius.py
+```
+
+**3. Data Preprocessing**
+
+```bash
 python run_preprocessing.py
+```
+
+**4. Model Comparison**
+
+```bash
 python scripts/2_compare_models.py
+```
+
+**5. Hyperparameter Tuning**
+
+```bash
 python scripts/3_tune.py
+```
+
+**6. Export Final Model**
+
+```bash
 python scripts/4_export_final.py
+```
+
+**7. HMM/Viterbi Decoding**
+
+```bash
 python scripts/5_decode_hmm.py
+```
+
+**8. Training Missing-Candidate Analysis**
+
+```bash
 python scripts/6_training_missing_candidate_map.py
+```
+
+**9. API Dry Run**
+
+```bash
 python scripts/7_api_dry_run.py
+```
+
+**10. Run Tests**
+
+```bash
 python -m pytest -q
+```
+
+To run the slow API tests separately:
+
+```bash
 python -m pytest tests/test_api.py -m slow -q -s
 ```
 
-`scripts/1_eda.py` uses training trips only to compare candidate settings. `scripts/1b_baseline_radius.py` adds the old 50 m/cap 10 setting as a reference row; it does not participate in the 150–200 m radius selection. The model comparison uses the held-out student set for reporting only. Optuna loads only training trips. The tuned-model export evaluates the student set after tuning is complete. HMM settings stay fixed in `config.yaml`.
+## Important Outputs
 
-Important outputs:
+| Output | Description |
+|---|---|
+| `results/candidate_radius_comparison.csv` | Candidate radius comparison |
+| `results/model_comparison.csv` | Classifier performance comparison |
+| `results/model_classification_report.csv` | Classification metrics |
+| `results/confusion_matrices/` | Confusion matrices for individual models |
+| `results/tuning_trials.csv` | Optuna optimization history |
+| `results/best_params.json` | Best hyperparameters |
+| `results/tuned_vs_untuned.csv` | Tuned and untuned model comparison |
+| `artifacts/final_model.joblib` | Frozen trained model |
+| `results/hmm_predictions.csv` | HMM prediction results |
+| `results/decoding_comparison.csv` | Classifier and HMM evaluation |
+| `results/figures/` | Evaluation visualizations |
+| `results/figures/maps/` | Interactive route maps |
 
-- Radius, recall and miss results: `results/candidate_radius_comparison.csv`, `results/candidate_radius_fold_results.csv`, and `results/candidate_radius_selection.json`.
-- Five-model results and class metrics: `results/model_comparison.csv`, `results/model_classification_report.csv`, `results/model_details.csv`.
-- Per-model student confusion matrices: `results/confusion_matrices/` (CSV and PNG).
-- Optuna trial history and best settings: `results/tuning_trials.csv`, `results/best_params.json`.
-- Tuned/untuned comparison and frozen artifact: `results/tuned_vs_untuned.csv`, `artifacts/final_model.joblib`, `artifacts/model_metadata.json`.
-- Label-free candidate probabilities: `results/candidate_probabilities.csv`; full observation accounting, including points with no candidates, is in `data/processed/observation_accounting.csv`.
-- HMM sequence output and classifier/HMM route metrics: `results/hmm_predictions.csv`, `results/decoding_comparison.csv`.
-- EDA tables/plots: `results/eda/`; interactive maps: `results/figures/maps/`.
+## Running the API and Frontend
 
-The probability export is keyed by `trip_id`, `gps_point_id`, and `candidate_arc_id`. Reference labels are stored separately. Missing observations are retained in the accounting file and are never assigned an invented arc.
+PathSnap provides a FastAPI backend and a lightweight browser interface.
 
-## API and UI
+### 1. Start the API server
 
-Laptop 1 (API; console output includes request and completion logs):
+Run on Laptop 1:
 
-```powershell
+```bash
 python -m uvicorn app.api:app --host 0.0.0.0 --port 8000
 ```
 
-Laptop 2 (static UI):
+### 2. Start the frontend
 
-```powershell
+Run on Laptop 2:
+
+```bash
 python -m http.server 8080 --directory app/ui
 ```
 
-Open `http://localhost:8080` on Laptop 2 and enter Laptop 1's reachable address, such as `http://192.168.1.20:8000`. The API exposes `GET /api/trips` and `POST /api/decode/{trip_id}`. It allows only IDs in the `student_test` split. It generates predictions before opening the corresponding reference route, returns metrics and predicted geometry, and never returns reference-route geometry. All 10 student-test API requests passed the automated dry run.
+### 3. Access the interface
 
-## Evaluation and labels
+Open the following URL in your browser:
 
-Candidate labels are strict: for each GPS observation, at most the closest candidate arc that appears in that trip's reference route is positive; all remaining candidates are negative. If no correct arc survives the radius and cap, no candidate is labeled positive. This avoids turning every route arc near a GPS point into a positive, but it can miss legitimate parallel or ambiguous route arcs.
+```text
+http://localhost:8080
+```
 
-The per-point features `dist_rank` and `dist_gap_m` describe a candidate's distance rank and separation from neighboring candidates. They help distinguish similarly close road options without using the reference route.
+Enter the reachable IP address of Laptop 1, for example:
 
-All classifier and HMM outputs preserve the full GPS observation sequence. A point with no candidates remains missing and contributes a false negative to the confusion accounting, recall/F1 and observation-level accuracy. Standard precision is `TP/(TP+FP)`; an absent prediction creates a false negative rather than a false positive, so precision is mathematically unchanged by that row. Candidate-miss rate and the full-point denominator make coverage visible. HMM route precision/recall/F1 and sequence penalties use the same explicit miss count.
+```text
+http://192.168.1.20:8000
+```
 
-## Git and AI disclosure
+### API Endpoints
 
-Work is on `member3-hmm-viterbi`. No commit or push was made. AI assistance (Codex) was used for implementation, debugging, and report drafting; the team remains responsible for reviewing and presenting the work.
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/trips` | Retrieves available student-test trip IDs |
+| POST | `/api/decode/{trip_id}` | Generates route predictions for a trip |
+
+The API restricts requests to trip IDs belonging to the `student_test` split.
+
+Predictions are generated before the corresponding reference route is opened for evaluation. The API returns predicted geometry and metrics without exposing reference-route geometry.
+
+All 10 student-test API requests passed the automated dry run.
+
+## Evaluation Methodology
+
+Candidate labels follow a strict labeling strategy.
+
+For each GPS observation, at most the closest candidate arc appearing in the corresponding reference route is marked positive. All other candidates are marked negative.
+
+If no correct road arc survives candidate generation, the observation has no positive candidate. Missing observations are retained rather than assigning an artificial road arc.
+
+The features `dist_rank` and `dist_gap_m` describe candidate distance ranking and separation from neighboring candidates.
+
+Both classifier and HMM evaluations preserve the complete GPS observation sequence. Candidate misses are accounted for in observation-level evaluation, recall, F1-score, and candidate coverage analysis.
+
+Detailed methodology, limitations, and metric definitions are documented in the final report.
+
+## Team Members
+
+This project was developed collaboratively by:
+
+1. **Pallavi Rajkumar Bubanale**
+2. **Snehita**
+3. **Ramith**
+4. **Ramitha**
+
+## AI Assistance Disclosure
+
+AI-assisted tools, including OpenAI Codex, were used to support implementation, debugging, and technical report drafting.
+
+The project team is responsible for reviewing, validating, understanding, and presenting the implementation and experimental results.
+
+---
+
+**PathSnap – Intelligent GPS-to-Road Map Matching**
+
+*Machine Learning | GPS Processing | Road Networks | Route Optimization*
