@@ -1,5 +1,5 @@
 """
-road_network.py – Member 1: Data Preprocessing and Candidate Generation
+road_network.py – Data Preprocessing and Candidate Generation
 ========================================================================
 
 Responsibility
@@ -61,7 +61,7 @@ EARTH_RADIUS_M = 6_371_000.0
 
 
 # ---------------------------------------------------------------------------
-# Low-level geometry helpers (public so Member 3 can import them)
+# Low-level geometry helpers (public so HMM decoding module can import them)
 # ---------------------------------------------------------------------------
 
 def calculate_distance(point1: Tuple[float, float],

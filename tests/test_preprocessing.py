@@ -1,5 +1,5 @@
 """
-test_preprocessing.py – Unit tests for Member 1: Data Preprocessing and Candidate Generation
+test_preprocessing.py – Unit tests for Data Preprocessing and Candidate Generation
 ==============================================================================================
 
 Tests use a small synthetic dataset so they can run without the real GPS data.
@@ -523,7 +523,7 @@ def run_all():
     ]
 
     print("\n" + "=" * 60)
-    print("PathSnap – Member 1 Test Suite")
+    print("PathSnap – Preprocessing Test Suite")
     print("=" * 60)
 
     for name, fn in tests:

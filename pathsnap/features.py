@@ -5,7 +5,7 @@ Candidate generation per GPS point, feature engineering,
 observation-level labels from .route.
 
 This file re-exports the candidate generation API from Member 1 so that
-Member 2 and Member 3 can import from pathsnap.features directly.
+model training and decoding modules can import from pathsnap.features directly.
 
     from pathsnap.features import (
         generate_candidates,

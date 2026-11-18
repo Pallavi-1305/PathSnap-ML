@@ -18,7 +18,7 @@ class Transition:
     network_distance_m: float = math.inf
 
 class DirectedRoadNetwork:
-    """Directed edge graph built from Member 1's .arcs row-index convention."""
+    """Directed edge graph built from the .arcs row-index convention."""
     def __init__(self, arcs: pd.DataFrame, lengths: Mapping[int, float] | None = None):
         required = {"arc_id", "from_node_id", "to_node_id"}
         if not required.issubset(arcs.columns):

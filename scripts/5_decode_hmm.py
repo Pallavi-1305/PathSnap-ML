@@ -1,4 +1,4 @@
-"""Select Member 2's best CV model and evaluate classifier vs HMM on student_test."""
+"""Select best cross-validation model and evaluate classifier vs HMM on student_test."""
 from __future__ import annotations
 import argparse
 import math

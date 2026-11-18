@@ -1,5 +1,5 @@
 """
-preprocessing package – Member 1: Data Preprocessing and Candidate Generation
+preprocessing package – Data Preprocessing and Candidate Generation
 ==============================================================================
 
 Public API (import these from anywhere in the project):

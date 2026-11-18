@@ -1,4 +1,4 @@
-"""Build the label-free, identifier-keyed export consumed by Member 3."""
+"""Build the label-free, identifier-keyed export consumed by the HMM decoding module."""
 from __future__ import annotations
 
 import numpy as np

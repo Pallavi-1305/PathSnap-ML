@@ -1,5 +1,5 @@
 """
-preprocess.py – Member 1: Data Preprocessing and Candidate Generation
+preprocess.py – This is the main entry point for preprocessing. It wraps
 ======================================================================
 
 Responsibility
@@ -268,7 +268,7 @@ def preprocess_trip(
     """
     Clean and enrich all components of a loaded trip.
 
-    This is the main entry point for Member 1 preprocessing.  It wraps
+    This is the main entry point for preprocessing module preprocessing.  It wraps
     preprocess_track and validates the nodes/arcs DataFrames without
     modifying the original data.
 

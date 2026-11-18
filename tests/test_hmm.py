@@ -1,4 +1,4 @@
-"""Synthetic directed-network tests for Member 3 map matching."""
+"""Synthetic directed-network tests for HMM-based map matching."""
 import pandas as pd
 from pathsnap.hmm import (DirectedRoadNetwork, TransitionModel, collapse_consecutive,
                           route_metrics, viterbi_decode)

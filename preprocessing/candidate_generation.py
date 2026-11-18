@@ -1,5 +1,5 @@
 """
-candidate_generation.py – Member 1: Data Preprocessing and Candidate Generation
+candidate_generation.py – Data Preprocessing and Candidate Generation
 ================================================================================
 
 Responsibility
@@ -30,7 +30,7 @@ Output schema (candidate_features.csv)
 Note on IDs
 -----------
 trip_id, gps_point_id, and candidate_arc_id are identifiers, NOT numeric input
-features for the ML model.  Member 2 should drop them before training.
+features for the ML model.  model training module should drop them before training.
 
 Note on the search radius
 --------------------------
@@ -450,7 +450,7 @@ def prepare_training_candidates(
     One-shot pipeline: load a training trip, preprocess it, generate candidates,
     and attach reference labels.
 
-    This is the function that Member 2 should call when building the training
+    This is the function that model training module should call when building the training
     dataset.
 
     Parameters

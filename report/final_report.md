@@ -1,6 +1,6 @@
 # PathSnap: final implementation and evaluation report
 
-**Branch:** `member3-hmm-viterbi`  
+**Branch:** `main`
 **Data available for this run:** 80 training trips and 10 student-test trips. The private evaluator dataset was not present and was not accessed.  
 **Evaluation date:** 2026-11-18
 

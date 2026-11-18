@@ -4,8 +4,8 @@ pathsnap/data.py
 Parse and validate raw trips; project coordinates.
 Responsibility: data in, clean arrays out.
 
-This file re-exports Member 1's preprocessing API so that the rest of the
-pathsnap package (Member 2, 3, 4) can import from a single location:
+This file re-exports preprocessing API so that the rest of the
+pathsnap package (other project modules) can import from a single location:
 
     from pathsnap.data import load_trip, preprocess_trip, ...
 

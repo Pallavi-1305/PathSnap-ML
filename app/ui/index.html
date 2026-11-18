@@ -1,114 +1,532 @@
+
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>PathSnap Route Review</title>
+  <title>PathSnap | Route Review Dashboard</title>
+
   <style>
-    :root { font-family: Segoe UI, Arial, sans-serif; color: #17212b; background: #f3f6f8; }
-    body { margin: 0; padding: 22px; }
-    main { max-width: 1200px; margin: auto; }
-    h1 { margin: 0 0 6px; }
-    .muted { color: #52616f; }
-    .controls,.panel { background: white; border: 1px solid #d8e0e7; border-radius: 10px; padding: 16px; margin: 14px 0; }
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; }
-    label { display: grid; gap: 5px; font-size: 13px; color: #52616f; }
-    input,select,button { min-height: 38px; padding: 6px 10px; border: 1px solid #aab7c4; border-radius: 6px; font: inherit; }
-    #api { width: 330px; }
-    button { background: #155c91; border-color: #155c91; color: white; cursor: pointer; }
-    button:disabled { opacity: .5; cursor: wait; }
-    #status { min-height: 22px; margin: 10px 0; }
-    .grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap: 12px; }
-    .metric { background: #f5f8fa; padding: 12px; border-radius: 8px; }
-    .metric h3 { margin: 0 0 8px; }
-    table { border-collapse: collapse; width: 100%; }
-    th,td { padding: 7px 9px; border-bottom: 1px solid #e1e6ea; text-align: right; }
-    th:first-child,td:first-child { text-align: left; }
-    #map { width: 100%; height: min(68vh,680px); background: #edf2f5; border: 1px solid #d8e0e7; border-radius: 8px; }
-    .legend { display:flex; gap:16px; flex-wrap:wrap; font-size:13px; }
-    .swatch { display:inline-block; width:20px; border-top:4px solid; vertical-align:middle; margin-right:5px; }
-    .gps { border-color:#202a33; }.cand { border-color:#b9c2ca; }.cls { border-color:#ef8b2c; }.hmm { border-color:#1967ad; }
-    @media(max-width:600px) { body { padding:10px; } #api { width:100%; } }
+    :root {
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: #17212b;
+      background: #f1f5f9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 28px 20px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #102b46, #155c91);
+      color: white;
+      padding: 28px;
+      border-radius: 14px;
+      margin-bottom: 22px;
+      box-shadow: 0 5px 18px rgba(16, 43, 70, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    .header p {
+      margin: 0;
+      color: #d9e8f5;
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: 20px;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 16px;
+    }
+
+    .muted {
+      color: #64748b;
+    }
+
+    .controls,
+    .panel {
+      background: white;
+      border: 1px solid #dce4ec;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 16px 0;
+      box-shadow: 0 3px 12px rgba(15, 35, 55, 0.04);
+    }
+
+    .controls {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    input,
+    select,
+    button {
+      min-height: 42px;
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font: inherit;
+    }
+
+    input,
+    select {
+      background: #fff;
+      color: #17212b;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #1976b9;
+      box-shadow: 0 0 0 3px rgba(25, 118, 185, 0.12);
+    }
+
+    #api {
+      width: 330px;
+      max-width: 100%;
+    }
+
+    button {
+      background: #155c91;
+      border-color: #155c91;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.2s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #10466f;
+      transform: translateY(-1px);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: wait;
+      transform: none;
+    }
+
+    #status {
+      min-height: 24px;
+      margin: 14px 2px;
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 26px;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 18px;
+      border-radius: 10px;
+    }
+
+    .metric h3 {
+      color: #155c91;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th,
+    td {
+      padding: 10px 9px;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: right;
+      font-size: 13px;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+      text-transform: capitalize;
+    }
+
+    #map {
+      display: block;
+      width: 100%;
+      height: min(68vh, 680px);
+      background: #f8fafc;
+      border: 1px solid #dce4ec;
+      border-radius: 10px;
+      margin-top: 16px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #475569;
+      margin: 12px 0;
+    }
+
+    .swatch {
+      display: inline-block;
+      width: 22px;
+      border-top: 4px solid;
+      vertical-align: middle;
+      margin-right: 6px;
+      border-radius: 4px;
+    }
+
+    .gps { border-color: #202a33; }
+    .cand { border-color: #b9c2ca; }
+    .cls { border-color: #ef8b2c; }
+    .hmm { border-color: #1967ad; }
+
+    #details {
+      line-height: 1.7;
+      font-size: 13px;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 12px;
+      }
+
+      .header {
+        padding: 22px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .controls {
+        align-items: stretch;
+      }
+
+      .controls label,
+      #api,
+      #trip,
+      .controls button {
+        width: 100%;
+      }
+
+      #map {
+        height: 420px;
+      }
+    }
   </style>
 </head>
+
 <body>
 <main>
-  <h1>PathSnap Route Review</h1>
-  <div class="muted">Choose a student-test trip. The API returns predictions and summary scores; reference route geometry stays on the API machine.</div>
+
+  <header class="header">
+    <h1>PathSnap</h1>
+    <p>
+      Intelligent GPS-to-Road Map Matching
+      <br>
+      Review predicted routes, compare classifier and HMM results,
+      and inspect GPS observations through an interactive route dashboard.
+    </p>
+  </header>
+
   <section class="controls">
-    <label>API address (Laptop 1)<input id="api" value="http://localhost:8000" placeholder="http://192.168.1.20:8000"></label>
-    <label>Student-test trip<select id="trip"><option value="">Connect to API first</option></select></label>
-    <button id="load">Load trips</button><button id="run" disabled>Decode route</button>
+    <label>
+      API address (Laptop 1)
+      <input
+        id="api"
+        value="http://localhost:8000"
+        placeholder="http://192.168.1.20:8000">
+    </label>
+
+    <label>
+      Student-test trip
+      <select id="trip">
+        <option value="">Connect to API first</option>
+      </select>
+    </label>
+
+    <button id="load">Load trips</button>
+    <button id="run" disabled>Decode route</button>
   </section>
-  <div id="status" role="status" class="muted">Set the API address, then load trips.</div>
+
+  <div id="status" role="status" class="muted">
+    Set the API address, then load trips.
+  </div>
+
   <section class="panel" id="results" hidden>
+
+    <h2>Route Evaluation Summary</h2>
     <div id="summary" class="grid"></div>
-    <h2>Predicted route map</h2>
-    <div class="legend"><span><i class="swatch gps"></i>GPS</span><span><i class="swatch cand"></i>Candidates</span><span><i class="swatch cls"></i>Classifier</span><span><i class="swatch hmm"></i>HMM + Viterbi</span><span style="color:#c22">Red points have no candidate</span></div>
-    <svg id="map" viewBox="0 0 1100 680" aria-label="GPS and predicted road routes"></svg>
+
+    <h2>Predicted Route Map</h2>
+
+    <div class="legend">
+      <span><i class="swatch gps"></i>GPS</span>
+      <span><i class="swatch cand"></i>Candidates</span>
+      <span><i class="swatch cls"></i>Classifier</span>
+      <span><i class="swatch hmm"></i>HMM + Viterbi</span>
+      <span style="color:#c22">Red points have no candidate</span>
+    </div>
+
+    <svg
+      id="map"
+      viewBox="0 0 1100 680"
+      aria-label="GPS and predicted road routes">
+    </svg>
+
     <p id="details" class="muted"></p>
+
   </section>
+
 </main>
+
 <script>
 const $ = (id) => document.getElementById(id);
-function base() { return $('api').value.trim().replace(/\/$/, ''); }
-function status(text, bad=false) { $('status').textContent=text; $('status').style.color=bad?'#a32323':'#52616f'; }
+
+function base() {
+  return $('api').value.trim().replace(/\/$/, '');
+}
+
+function status(text, bad = false) {
+  $('status').textContent = text;
+  $('status').style.color = bad ? '#a32323' : '#52616f';
+}
+
 async function loadTrips() {
   status('Connecting to API…');
+
   try {
-    const response=await fetch(base()+'/api/trips'); if(!response.ok) throw new Error('HTTP '+response.status);
-    const data=await response.json(); const select=$('trip'); select.replaceChildren();
-    for(const id of data.trip_ids) { const option=document.createElement('option'); option.value=id; option.textContent=id; select.append(option); }
-    $('run').disabled=!data.trip_ids.length; status(`Loaded ${data.trip_ids.length} student-test trips.`);
-  } catch(e) { status(`Could not reach API: ${e.message}. Check Laptop 1 address and that the API is running.`,true); }
-}
-function metricCard(title, values) {
-  const card=document.createElement('div'); card.className='metric';
-  const h=document.createElement('h3'); h.textContent=title; card.append(h);
-  const table=document.createElement('table');
-  for(const [key,value] of Object.entries(values)) {
-    if(typeof value!=='number') continue;
-    const row=table.insertRow(); row.insertCell().textContent=key.replaceAll('_',' ');
-    row.insertCell().textContent=value.toFixed(4);
+    const response = await fetch(base() + '/api/trips');
+
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+
+    const data = await response.json();
+    const select = $('trip');
+
+    select.replaceChildren();
+
+    for (const id of data.trip_ids) {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = id;
+      select.append(option);
+    }
+
+    $('run').disabled = !data.trip_ids.length;
+
+    status(`Loaded ${data.trip_ids.length} student-test trips.`);
+
+  } catch (e) {
+    status(
+      `Could not reach API: ${e.message}. Check Laptop 1 address and that the API is running.`,
+      true
+    );
   }
-  card.append(table); return card;
 }
+
+function metricCard(title, values) {
+  const card = document.createElement('div');
+  card.className = 'metric';
+
+  const h = document.createElement('h3');
+  h.textContent = title;
+  card.append(h);
+
+  const table = document.createElement('table');
+
+  for (const [key, value] of Object.entries(values)) {
+    if (typeof value !== 'number') continue;
+
+    const row = table.insertRow();
+
+    row.insertCell().textContent = key.replaceAll('_', ' ');
+    row.insertCell().textContent = value.toFixed(4);
+  }
+
+  card.append(table);
+  return card;
+}
+
 function drawMap(data) {
-  const svg=$('map'); svg.replaceChildren();
-  const points=data.gps_points.filter(p=>Number.isFinite(p.lat)&&Number.isFinite(p.lon));
-  if(!points.length) return;
-  const lons=points.map(p=>p.lon), lats=points.map(p=>p.lat);
-  let minX=Math.min(...lons),maxX=Math.max(...lons),minY=Math.min(...lats),maxY=Math.max(...lats);
-  const padX=(maxX-minX)*.06||.001,padY=(maxY-minY)*.06||.001; minX-=padX;maxX+=padX;minY-=padY;maxY+=padY;
-  const xy=([lat,lon])=>[35+(lon-minX)/(maxX-minX)*1030,645-(lat-minY)/(maxY-minY)*610];
-  function lines(items,color,width,opacity) {
-    for(const item of items||[]) {
-      const pts=item.coordinates.map(xy); if(pts.length<2)continue;
-      const path=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-      path.setAttribute('points',pts.map(p=>p.join(',')).join(' ')); path.setAttribute('fill','none');
-      path.setAttribute('stroke',color); path.setAttribute('stroke-width',width); path.setAttribute('stroke-opacity',opacity);
-      path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');svg.append(path);
+  const svg = $('map');
+  svg.replaceChildren();
+
+  const points = data.gps_points.filter(
+    p => Number.isFinite(p.lat) && Number.isFinite(p.lon)
+  );
+
+  if (!points.length) return;
+
+  const lons = points.map(p => p.lon);
+  const lats = points.map(p => p.lat);
+
+  let minX = Math.min(...lons);
+  let maxX = Math.max(...lons);
+  let minY = Math.min(...lats);
+  let maxY = Math.max(...lats);
+
+  const padX = (maxX - minX) * 0.06 || 0.001;
+  const padY = (maxY - minY) * 0.06 || 0.001;
+
+  minX -= padX;
+  maxX += padX;
+  minY -= padY;
+  maxY += padY;
+
+  const xy = ([lat, lon]) => [
+    35 + (lon - minX) / (maxX - minX) * 1030,
+    645 - (lat - minY) / (maxY - minY) * 610
+  ];
+
+  function lines(items, color, width, opacity) {
+    for (const item of items || []) {
+      const pts = item.coordinates.map(xy);
+
+      if (pts.length < 2) continue;
+
+      const path = document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'polyline'
+      );
+
+      path.setAttribute(
+        'points',
+        pts.map(p => p.join(',')).join(' ')
+      );
+
+      path.setAttribute('fill', 'none');
+      path.setAttribute('stroke', color);
+      path.setAttribute('stroke-width', width);
+      path.setAttribute('stroke-opacity', opacity);
+      path.setAttribute('stroke-linecap', 'round');
+      path.setAttribute('stroke-linejoin', 'round');
+
+      svg.append(path);
     }
   }
-  lines(data.candidate_segments,'#b9c2ca',1.5,.55);
-  lines(data.classifier_route_segments,'#ef8b2c',4,.9);
-  lines(data.hmm_route_segments,'#1967ad',5,.95);
-  const gps=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-  gps.setAttribute('points',points.map(p=>xy([p.lat,p.lon]).join(',')).join(' '));gps.setAttribute('fill','none');gps.setAttribute('stroke','#202a33');gps.setAttribute('stroke-width','2');svg.append(gps);
-  for(const p of points) { const circle=document.createElementNS('http://www.w3.org/2000/svg','circle'); const [x,y]=xy([p.lat,p.lon]);circle.setAttribute('cx',x);circle.setAttribute('cy',y);circle.setAttribute('r',p.candidate_count?2.1:4);circle.setAttribute('fill',p.candidate_count?'#202a33':'#c22');circle.append();svg.append(circle); }
+
+  lines(data.candidate_segments, '#b9c2ca', 1.5, 0.55);
+  lines(data.classifier_route_segments, '#ef8b2c', 4, 0.9);
+  lines(data.hmm_route_segments, '#1967ad', 5, 0.95);
+
+  const gps = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'polyline'
+  );
+
+  gps.setAttribute(
+    'points',
+    points.map(p => xy([p.lat, p.lon]).join(',')).join(' ')
+  );
+
+  gps.setAttribute('fill', 'none');
+  gps.setAttribute('stroke', '#202a33');
+  gps.setAttribute('stroke-width', '2');
+
+  svg.append(gps);
+
+  for (const p of points) {
+    const circle = document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'circle'
+    );
+
+    const [x, y] = xy([p.lat, p.lon]);
+
+    circle.setAttribute('cx', x);
+    circle.setAttribute('cy', y);
+    circle.setAttribute('r', p.candidate_count ? 2.1 : 4);
+    circle.setAttribute(
+      'fill',
+      p.candidate_count ? '#202a33' : '#c22'
+    );
+
+    svg.append(circle);
+  }
 }
+
 async function decode() {
-  $('run').disabled=true; status('Running frozen pipeline… this may take a little while.');
+  $('run').disabled = true;
+
+  status('Running frozen pipeline… this may take a little while.');
+
   try {
-    const id=$('trip').value; const response=await fetch(base()+'/api/decode/'+encodeURIComponent(id),{method:'POST'});
-    const data=await response.json(); if(!response.ok) throw new Error(data.detail||('HTTP '+response.status));
-    $('summary').replaceChildren(metricCard('Classifier only',data.classifier_only_metrics),metricCard('Classifier + HMM + Viterbi',data.hmm_metrics));
-    $('results').hidden=false;drawMap(data);$('details').textContent=`Trip ${data.trip_id} · model ${data.selected_model} · ${data.observation_count} GPS observations · ${data.missing_candidate_observations} observations without a correct candidate · candidate radius ${data.candidate_radius_m} m, cap ${data.candidate_cap}.`;
+    const id = $('trip').value;
+
+    const response = await fetch(
+      base() + '/api/decode/' + encodeURIComponent(id),
+      { method: 'POST' }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.detail || ('HTTP ' + response.status));
+    }
+
+    $('summary').replaceChildren(
+      metricCard('Classifier only', data.classifier_only_metrics),
+      metricCard('Classifier + HMM + Viterbi', data.hmm_metrics)
+    );
+
+    $('results').hidden = false;
+
+    drawMap(data);
+
+    $('details').textContent =
+      `Trip ${data.trip_id} · model ${data.selected_model} · ` +
+      `${data.observation_count} GPS observations · ` +
+      `${data.missing_candidate_observations} observations without a correct candidate · ` +
+      `candidate radius ${data.candidate_radius_m} m, cap ${data.candidate_cap}.`;
+
     status('Decode and server-side route evaluation complete.');
-  } catch(e) { status(`Trip failed: ${e.message}`,true); }
-  finally { $('run').disabled=false; }
+
+  } catch (e) {
+    status(`Trip failed: ${e.message}`, true);
+
+  } finally {
+    $('run').disabled = false;
+  }
 }
-$('load').addEventListener('click',loadTrips);$('run').addEventListener('click',decode);
+
+$('load').addEventListener('click', loadTrips);
+$('run').addEventListener('click', decode);
 </script>
+
 </body>
 </html>

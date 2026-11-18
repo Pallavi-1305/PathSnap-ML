@@ -7,3 +7,4 @@ __pycache__/
 *.log
 
 results/student_test_predictions.csv
+.pytest_tmp/

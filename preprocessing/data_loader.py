@@ -1,5 +1,5 @@
 """
-data_loader.py – Member 1: Data Preprocessing and Candidate Generation
+data_loader.py – Data Preprocessing and Candidate Generation
 =======================================================================
 
 Responsibility
