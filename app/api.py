@@ -1,4 +1,4 @@
-"""Laptop 1 inference/evaluation API. Reference-route data never leaves this process."""
+"""Inference/evaluation API server. Reference-route data never leaves this process."""
 from __future__ import annotations
 import logging
 import sys
